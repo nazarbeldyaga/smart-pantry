@@ -1,6 +1,5 @@
-// smart-pantry/eslint.config.js
 import apiConfig from './packages/api/eslint.config.mjs';
-import webConfig from './packages/web/eslint.config.js';
+import webConfig from 'web/eslint.config.mjs';
 
 export default [
   // Глобальні налаштування для всього монорепозиторію
