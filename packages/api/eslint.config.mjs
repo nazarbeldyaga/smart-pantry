@@ -1,35 +1,42 @@
-// @ts-check
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
+import baseConfig from '../../eslint.config.base.mjs';
 import tseslint from 'typescript-eslint';
+// Імпортуємо список глобальних змінних
+import globals from 'globals';
 
 export default tseslint.config(
+  // 1. Спочатку вставляємо ВСІ правила з нашого "Фундаменту"
+  ...baseConfig,
+  // 2. Додаємо об'єкт з "важкими" правилами, що потребують tsconfig.json
   {
-    ignores: ['eslint.config.mjs'],
+    // 'files' - Застосовувати ці правила ТІЛЬКИ до файлів у 'src' та 'test'
+    files: ['src/**/*.ts', 'test/**/*.ts'],
+    extends: [...tseslint.configs.recommendedTypeChecked],
+    languageOptions: {
+      parserOptions: {
+        // 'project: true' - Вказує ESLint шукати найближчий 'tsconfig.json'
+        project: true,
+        // 'tsconfigRootDir' - Каже, звідки починати шукати 'tsconfig.json'
+        // 'import.meta.dirname' - це сучасний аналог '__dirname' в ES модулях
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    // Додаткові правила, специфічні для API
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-unsafe-member-access': 'warn',
+    },
   },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
+  // 3. Ще один об'єкт для загальних налаштувань пакету 'api'
   {
     languageOptions: {
+      // Оголошуємо глобальні змінні для середовища Node.js та Jest
       globals: {
         ...globals.node,
         ...globals.jest,
       },
-      sourceType: 'commonjs',
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
     },
-  },
-  {
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
-    },
-  },
+    // Ігноруємо папку збірки
+    ignores: ['dist/'],
+  }
 );
