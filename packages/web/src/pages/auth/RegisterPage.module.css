@@ -1,0 +1,43 @@
+.container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.errorText {
+  color: red;
+  font-size: 14px;
+}
+
+/* Стиль для кнопки "Зареєструватися" */
+.submitButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submitButton:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+/* Стиль для кнопки "Увійти" */
+.loginButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #0ba641;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
