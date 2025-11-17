@@ -39,4 +39,22 @@ export class PantryRepository {
     await this.writeDB(db);
     return item;
   }
+
+  async deleteByIds(userId: string, itemIds: string[]): Promise<void> {
+    const db = await this.readDB();
+
+    db.pantryItems = db.pantryItems.filter((item) => {
+      if (item.userId !== userId) {
+        return true;
+      }
+
+      if (!itemIds.includes(item.id)) {
+        return true;
+      }
+
+      return false;
+    });
+
+    await this.writeDB(db);
+  }
 }

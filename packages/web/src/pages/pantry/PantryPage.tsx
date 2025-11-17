@@ -6,16 +6,22 @@ import { useAuthStore } from '../../features/auth/state/useAuthStore';
 import { Button } from '../../shared/components/Button';
 import styles from './PantryPage.module.css';
 import { AddItemModal } from '../../features/pantry/components/AddItemModal';
+import { DeleteItemModal } from '../../features/pantry/components/DeleteItemModal';
 
 export const PantryPage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenAdd, setIsModalOpenAdd] = useState(false);
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
 
   const navigate = useNavigate();
 
   const handleAddItemClick = () => {
-    setIsModalOpen(true);
+    setIsModalOpenAdd(true);
+  };
+
+  const handleDeleteItemClick = () => {
+    setIsModalOpenDelete(true);
   };
 
   const handleAddShoppingListClick = () => {
@@ -36,12 +42,14 @@ export const PantryPage: React.FC = () => {
             Список покупок
           </Button>
           <Button onClick={handleAddItemClick}>+ Додати продукти</Button>
+          <Button onClick={handleDeleteItemClick}>+ Видалити продукти</Button>
         </div>
       </div>
 
       <PantryList />
 
-      <AddItemModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddItemModal isOpen={isModalOpenAdd} onClose={() => setIsModalOpenAdd(false)} />
+      <DeleteItemModal isOpen={isModalOpenDelete} onClose={() => setIsModalOpenDelete(false)} />
     </PageLayout>
   );
 };

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getPantryItems, addPantryItem } from '../api/pantryApi';
+import { getPantryItems, addPantryItem, deletePantryItems } from '../api/pantryApi';
 import type { IPantryItem, AddPantryItemDto } from '../types/pantry-types';
 
 interface PantryState {
@@ -9,6 +9,7 @@ interface PantryState {
 
   fetchItems: () => Promise<void>;
   addItem: (item: AddPantryItemDto) => Promise<boolean>;
+  deleteItems: (itemIds: string[]) => Promise<boolean>;
 }
 
 export const usePantryStore = create<PantryState>((set) => ({
@@ -37,6 +38,28 @@ export const usePantryStore = create<PantryState>((set) => ({
       return true;
     } catch (err: any) {
       const message = err.response?.data?.message || 'Невідома помилка сервера';
+      set({ error: message, isLoading: false });
+      return false;
+    }
+  },
+
+  deleteItems: async (itemIds) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      // 1. Викликаємо API з масивом ID
+      await deletePantryItems(itemIds);
+
+      // 2. Оновлюємо стейт: фільтруємо, залишаючи лише ті,
+      // що НЕ входять до списку 'itemIds'
+      set((state) => ({
+        items: state.items.filter((item) => !itemIds.includes(item.id)),
+        isLoading: false,
+      }));
+
+      return true;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Помилка при видаленні продуктів';
       set({ error: message, isLoading: false });
       return false;
     }

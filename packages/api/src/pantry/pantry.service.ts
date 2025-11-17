@@ -36,4 +36,8 @@ export class PantryService {
 
     return this.pantryRepo.create(newItem);
   }
+
+  async deleteItems(userId: string, itemIds: string[]): Promise<void> {
+    return this.pantryRepo.deleteByIds(userId, itemIds);
+  }
 }
