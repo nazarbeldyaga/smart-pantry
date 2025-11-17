@@ -25,7 +25,6 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const token = await this.jwtService.signAsync(payload);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...userProfile } = user;
     return { user: userProfile, token };
   }
@@ -36,7 +35,6 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const token = await this.jwtService.signAsync(payload);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...userProfile } = user;
     return { user: userProfile, token };
   }

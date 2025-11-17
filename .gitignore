@@ -10,6 +10,9 @@
 /packages/api/dist
 /packages/web/dist
 
+/packages/api/db.*
+!/packages/api/db.products.json
+
 /packages/api/build
 /packages/web/build
 

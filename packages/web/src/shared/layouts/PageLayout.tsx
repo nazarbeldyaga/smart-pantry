@@ -1,4 +1,3 @@
-// web/src/shared/layouts/PageLayout.tsx
 import React from 'react';
 import { useAuthStore } from '../../features/auth/state/useAuthStore.ts';
 

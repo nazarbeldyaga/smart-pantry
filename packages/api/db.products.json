@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "id": "prod1",
+      "name": "Молоко",
+      "category": "Молочне"
+    },
+    {
+      "id": "prod2",
+      "name": "Картопля",
+      "category": "Овочі"
+    },
+    {
+      "id": "prod3",
+      "name": "Борошно",
+      "category": "Випічка"
+    },
+    {
+      "id": "prod4",
+      "name": "Яйця",
+      "category": "custom"
+    },
+    {
+      "id": "prod5",
+      "name": "Сіль",
+      "category": "Спеції"
+    },
+    {
+      "id": "prod6",
+      "name": "Цукор",
+      "category": "Спеції"
+    },
+    {
+      "id": "prod7",
+      "name": "Сметана",
+      "category": "Молочне"
+    },
+    {
+      "id": "prod8",
+      "name": "Хліб",
+      "category": "Випічка"
+    }
+  ]
+}

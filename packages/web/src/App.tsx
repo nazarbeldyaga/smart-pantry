@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
-import { PantryPage } from './pages/PantryPage';
+import { PantryPage } from './pages/pantry/PantryPage.tsx';
 import { ProtectedRoute } from './shared/components/ProtectedRoute';
+import { ShoppingListPage } from './pages/ShoppingListPage';
 
 function App() {
   return (
@@ -15,6 +16,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PantryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/shopping-list"
+          element={
+            <ProtectedRoute>
+              <ShoppingListPage />
             </ProtectedRoute>
           }
         />
