@@ -32,9 +32,7 @@ export const DeleteItemModal: React.FC<DeleteItemModalProps> = ({ isOpen, onClos
 
   const availableInstances = useMemo(() => {
     return allPantryItems.filter(
-      (item) =>
-        item.name === selectedName && // Які відповідають назві
-        !itemsToDelete.find((d) => d.id === item.id) // Які ще не в кошику
+      (item) => item.name === selectedName && !itemsToDelete.find((d) => d.id === item.id)
     );
   }, [allPantryItems, selectedName, itemsToDelete]);
 
@@ -49,7 +47,6 @@ export const DeleteItemModal: React.FC<DeleteItemModalProps> = ({ isOpen, onClos
     const itemToAdd = allPantryItems.find((item) => item.id === instanceId);
     if (itemToAdd) {
       setItemsToDelete((prev) => [...prev, itemToAdd]);
-      // Скидаємо поля
       setSelectedName('');
       setSelectedInstanceId('');
     }
@@ -77,7 +74,6 @@ export const DeleteItemModal: React.FC<DeleteItemModalProps> = ({ isOpen, onClos
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Видалити продукти з комори">
       <form onSubmit={handleSubmit} noValidate>
-        {/* === FIELD 1: НАЗВА ПРОДУКТУ (з datalist) === */}
         <div className={styles.formRow}>
           <Input
             label="1. Оберіть назву продукту"
@@ -142,12 +138,7 @@ export const DeleteItemModal: React.FC<DeleteItemModalProps> = ({ isOpen, onClos
           </div>
         </div>
 
-        <Button
-          type="submit"
-          variant="danger"
-          style={{ width: '100%' }}
-          disabled={itemsToDelete.length === 0}
-        >
+        <Button type="submit" style={{ width: '100%' }} disabled={itemsToDelete.length === 0}>
           {`Видалити (${itemsToDelete.length}) ${itemsToDelete.length === 1 ? 'продукт' : 'продукти'}`}
         </Button>
       </form>

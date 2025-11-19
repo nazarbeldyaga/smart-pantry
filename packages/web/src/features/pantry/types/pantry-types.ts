@@ -2,6 +2,7 @@ import type { UnitType } from '../../../shared/types/domain-types';
 
 export interface IPantryItem {
   id: string;
+  productId: string | null;
   name: string;
   quantity: number;
   unit: UnitType;

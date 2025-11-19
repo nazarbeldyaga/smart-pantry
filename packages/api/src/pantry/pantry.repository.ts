@@ -57,4 +57,29 @@ export class PantryRepository {
 
     await this.writeDB(db);
   }
+
+  async findById(id: string): Promise<PantryItem | undefined> {
+    const db = await this.readDB();
+    return db.pantryItems.find((item) => item.id === id);
+  }
+
+  async update(itemId: string, updates: Partial<PantryItem>): Promise<PantryItem> {
+    const db = await this.readDB();
+    const index = db.pantryItems.findIndex((item) => item.id === itemId);
+
+    if (index === -1) {
+      throw new Error('Item not found during update write');
+    }
+
+    const originalItem = db.pantryItems[index];
+
+    const updatedItem = {
+      ...originalItem,
+      ...updates,
+    };
+    db.pantryItems[index] = updatedItem;
+    await this.writeDB(db);
+
+    return updatedItem;
+  }
 }

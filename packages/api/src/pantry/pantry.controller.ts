@@ -8,12 +8,15 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Patch,
+  Param,
 } from '@nestjs/common';
 import { PantryService } from './pantry.service';
 import { CreatePantryItemDto } from './dto/create-pantry-item.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request as ExpressRequest } from 'express';
 import { DeletePantryItemsDto } from './dto/delete-pantry-items.dto';
+import { EditPantryItemDto } from './dto/edit-pantry-item.dto';
 
 interface JwtUserPayload {
   sub: string;
@@ -49,5 +52,16 @@ export class PantryController {
     const userId = req.user.sub;
 
     await this.pantryService.deleteItems(userId, dto.ids);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id')
+  async updateItem(
+    @Request() req: RequestWithUser,
+    @Param('id') itemId: string,
+    @Body() dto: EditPantryItemDto
+  ) {
+    const userId = req.user.sub;
+    return this.pantryService.updateItem(userId, itemId, dto);
   }
 }

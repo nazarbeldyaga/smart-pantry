@@ -1,5 +1,10 @@
 import { create } from 'zustand';
-import { getPantryItems, addPantryItem, deletePantryItems } from '../api/pantryApi';
+import {
+  getPantryItems,
+  addPantryItem,
+  deletePantryItems,
+  updatePantryItem,
+} from '../api/pantryApi';
 import type { IPantryItem, AddPantryItemDto } from '../types/pantry-types';
 
 interface PantryState {
@@ -10,6 +15,8 @@ interface PantryState {
   fetchItems: () => Promise<void>;
   addItem: (item: AddPantryItemDto) => Promise<boolean>;
   deleteItems: (itemIds: string[]) => Promise<boolean>;
+
+  updateItem: (id: string, updates: AddPantryItemDto) => Promise<boolean>;
 }
 
 export const usePantryStore = create<PantryState>((set) => ({
@@ -47,11 +54,8 @@ export const usePantryStore = create<PantryState>((set) => ({
     try {
       set({ isLoading: true, error: null });
 
-      // 1. Викликаємо API з масивом ID
       await deletePantryItems(itemIds);
 
-      // 2. Оновлюємо стейт: фільтруємо, залишаючи лише ті,
-      // що НЕ входять до списку 'itemIds'
       set((state) => ({
         items: state.items.filter((item) => !itemIds.includes(item.id)),
         isLoading: false,
@@ -60,6 +64,24 @@ export const usePantryStore = create<PantryState>((set) => ({
       return true;
     } catch (err: any) {
       const message = err.response?.data?.message || 'Помилка при видаленні продуктів';
+      set({ error: message, isLoading: false });
+      return false;
+    }
+  },
+
+  updateItem: async (id, updates) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      const updatedItemFromApi = await updatePantryItem(id, updates);
+
+      set((state) => ({
+        items: state.items.map((item) => (item.id === id ? updatedItemFromApi : item)),
+        isLoading: false,
+      }));
+      return true;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Помилка при оновленні продукту';
       set({ error: message, isLoading: false });
       return false;
     }

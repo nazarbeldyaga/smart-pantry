@@ -21,15 +21,25 @@ export const addPantryItem = async (item: AddPantryItemDto): Promise<IPantryItem
 export const deletePantryItems = async (itemIds: string[]): Promise<void> => {
   console.log('API: Запит deletePantryItems з IDs:', itemIds);
   try {
-    // Axios дозволяє надсилати тіло (data) у DELETE-запиті.
-    // На бекенді (NestJS) ви будете ловити це тіло через @Body().
     await apiClient.delete('/pantry', {
       data: { ids: itemIds },
     });
-    // Успішне видалення зазвичай не повертає вміст (статус 204)
   } catch (error) {
     console.error('Помилка видалення продуктів:', error);
-    // Також перекидаємо помилку, щоб стейт-менеджер її обробив
+    throw error;
+  }
+};
+
+export const updatePantryItem = async (
+  id: string,
+  updates: AddPantryItemDto
+): Promise<IPantryItem> => {
+  console.log(`API: Запит updatePantryItem для ID: ${id}`, updates);
+  try {
+    const response = await apiClient.patch<IPantryItem>(`/pantry/${id}`, updates);
+    return response.data;
+  } catch (error) {
+    console.error(`Помилка оновлення продукту ID ${id}:`, error);
     throw error;
   }
 };
