@@ -9,7 +9,7 @@ interface PantryDbData {
 
 @Injectable()
 export class PantryRepository {
-  private dbPath = path.join(process.cwd(), 'db.user_product.json');
+  private dbPath = path.join(process.cwd(), 'db.pantry.json');
 
   private async readDB(): Promise<PantryDbData> {
     try {

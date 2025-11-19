@@ -9,5 +9,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [AuthModule, ProductModule],
   controllers: [PantryController],
   providers: [PantryService, PantryRepository],
+  exports: [PantryService],
 })
 export class PantryModule {}

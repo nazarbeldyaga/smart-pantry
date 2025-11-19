@@ -103,9 +103,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) =
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             disabled={isCategoryLocked}
-            placeholder={
-              isCategoryLocked ? 'Категорія з довідника' : 'Напр: Смаколики (опціонально)'
-            }
+            placeholder={isCategoryLocked ? 'Категорія з довідника' : 'Напр: Молочне (опціонально)'}
           />
         </div>
 
@@ -116,7 +114,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) =
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
             required
-            min={0.1}
+            min={0.01}
           />
         </div>
 
