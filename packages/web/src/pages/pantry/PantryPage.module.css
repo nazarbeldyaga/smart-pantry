@@ -1,11 +1,43 @@
+/* Контейнер всієї сторінки (можна додати в глобальні стилі або тут) */
+.pageContainer {
+  background-color: #f8f9fa; /* Світло-сірий фон як у додатках */
+  min-height: 100vh;
+}
+
+/* Хедер сторінки */
 .header {
+  padding: 20px 0 30px 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 15px;
 }
 
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* Група кнопок */
 .buttonGroup {
   display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Адаптивність для кнопок */
+@media (max-width: 600px) {
+  .buttonGroup {
+    flex-direction: column;
+  }
+  .buttonGroup button {
+    width: 100%;
+  }
 }

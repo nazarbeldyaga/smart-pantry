@@ -1,57 +1,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { usePantryStore } from '../state/usePantryStore';
+import { PantryCard } from './PantryCard';
 import type { IPantryItem } from '../types/pantry-types';
 import styles from './PantryList.module.css';
 
-type SortKey = 'name' | 'quantity' | 'category' | 'expiryDate';
+type SortKey = 'name' | 'quantity' | 'expiryDate';
 type SortOrder = 'asc' | 'desc';
-
-const formatDate = (dateString?: string) => {
-  if (!dateString) return 'N/A';
-  try {
-    return new Date(dateString).toLocaleDateString('uk-UA');
-  } catch (e) {
-    return 'Невірна дата';
-  }
-};
-
-const getExpiryInfo = (dateString?: string): { text: string; colorClass: string } => {
-  if (!dateString) {
-    return { text: '', colorClass: '' };
-  }
-
-  const today = new Date();
-  const expiryDate = new Date(dateString);
-
-  today.setHours(0, 0, 0, 0);
-  expiryDate.setHours(0, 0, 0, 0);
-
-  const diffTime = expiryDate.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 0) {
-    return {
-      text: `(прострочено ${-diffDays} дн.)`,
-      colorClass: styles.expired,
-    };
-  }
-  if (diffDays === 0) {
-    return {
-      text: '(останній день)',
-      colorClass: styles.warn,
-    };
-  }
-  if (diffDays <= 5) {
-    return {
-      text: `(залишилось ${diffDays} дн.)`,
-      colorClass: styles.warn,
-    };
-  }
-  return {
-    text: `(залишилось ${diffDays} дн.)`,
-    colorClass: styles.safe,
-  };
-};
 
 export const PantryList: React.FC = () => {
   const items = usePantryStore((state) => state.items);
@@ -59,101 +13,146 @@ export const PantryList: React.FC = () => {
   const error = usePantryStore((state) => state.error);
   const fetchItems = usePantryStore((state) => state.fetchItems);
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   const [sortKey, setSortKey] = useState<SortKey>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   useEffect(() => {
     fetchItems();
   }, [fetchItems]);
 
-  const sortedItems = useMemo(() => {
-    return [...items].sort((a: IPantryItem, b: IPantryItem) => {
-      let result = 0;
+  const processedItems = useMemo(() => {
+    const result = items.filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // 2. Сортування
+    result.sort((a: IPantryItem, b: IPantryItem) => {
+      let compareResult = 0;
 
       if (sortKey === 'quantity') {
-        const aValue = a.quantity;
-        const bValue = b.quantity;
-        result = aValue - bValue;
-      } else if (sortKey === 'name' || sortKey === 'category') {
-        const aValue = a[sortKey];
-        const bValue = b[sortKey];
-        result = aValue.localeCompare(bValue);
+        compareResult = a.quantity - b.quantity;
+      } else if (sortKey === 'name') {
+        compareResult = a.name.localeCompare(b.name);
       } else if (sortKey === 'expiryDate') {
-        const aValue = a.expiryDate;
-        const bValue = b.expiryDate;
-        if (aValue && bValue) {
-          if (aValue < bValue) result = -1;
-          else if (aValue > bValue) result = 1;
-        } else if (aValue) {
-          result = -1;
-        } else if (bValue) {
-          result = 1;
+        const aDate = a.expiryDate;
+        const bDate = b.expiryDate;
+        // Продукти без дати - в кінець
+        if (aDate && bDate) {
+          compareResult = aDate.localeCompare(bDate);
+        } else if (aDate) {
+          compareResult = -1;
+        } else if (bDate) {
+          compareResult = 1;
         }
       }
-      return sortOrder === 'asc' ? result : -result;
+
+      return sortOrder === 'asc' ? compareResult : -compareResult;
     });
-  }, [items, sortKey, sortOrder]);
 
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortOrder('asc');
-    }
+    return result;
+  }, [items, searchQuery, sortKey, sortOrder]);
+
+  const handleSortSelect = (key: SortKey, order: SortOrder) => {
+    setSortKey(key);
+    setSortOrder(order);
+    setIsSortMenuOpen(false);
   };
 
-  const getSortArrow = (key: SortKey) => {
-    if (sortKey !== key) return null;
-    return sortOrder === 'asc' ? ' ▲' : ' ▼';
-  };
-
-  if (isLoading) {
-    return <p style={{ textAlign: 'center', padding: '20px' }}>Завантаження продуктів...</p>;
-  }
-  if (error) {
-    return <p style={{ color: 'red', textAlign: 'center', padding: '20px' }}>Помилка: {error}</p>;
-  }
-  if (!isLoading && items.length === 0) {
-    return <p style={{ textAlign: 'center', padding: '20px' }}>Ваша комора порожня.</p>;
-  }
+  if (isLoading) return <p style={{ textAlign: 'center', marginTop: 20 }}>Завантаження...</p>;
+  if (error) return <p style={{ color: 'red', textAlign: 'center' }}>Помилка: {error}</p>;
 
   return (
-    <table className={styles.pantryTable}>
-      <thead>
-        <tr>
-          <th onClick={() => handleSort('name')}>Назва {getSortArrow('name')}</th>
-          <th onClick={() => handleSort('quantity')}>Кількість {getSortArrow('quantity')}</th>
-          <th onClick={() => handleSort('category')}>Категорія {getSortArrow('category')}</th>
-          <th onClick={() => handleSort('expiryDate')}>
-            Термін придатності {getSortArrow('expiryDate')}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {sortedItems.map((item) => {
-          const expiryInfo = getExpiryInfo(item.expiryDate);
+    <div>
+      <div className={styles.controls}>
+        <div className={styles.searchContainer}>
+          <span className={styles.searchIcon}>🔍</span>
+          <input
+            type="text"
+            placeholder="Пошук продуктів..."
+            className={styles.searchInput}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className={styles.sortContainer}>
+          <button
+            className={`${styles.sortButton} ${isSortMenuOpen ? styles.active : ''}`}
+            onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
+            title="Сортування"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="4" x2="14" y1="12" y2="12" />
+              <line x1="4" x2="10" y1="18" y2="18" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+            </svg>
+          </button>
 
-          return (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>
-                {item.quantity} {item.unit}
-              </td>
-              <td>{item.category}</td>
-              <td>
-                {formatDate(item.expiryDate)}
-
-                {expiryInfo.text && (
-                  <span className={`${styles.daysLeft} ${expiryInfo.colorClass}`}>
-                    {expiryInfo.text}
-                  </span>
-                )}
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+          {isSortMenuOpen && (
+            <div className={styles.sortMenu}>
+              <div
+                className={`${styles.sortOption} ${sortKey === 'name' && sortOrder === 'asc' ? styles.selected : ''}`}
+                onClick={() => handleSortSelect('name', 'asc')}
+              >
+                Назва (А-Я) {sortKey === 'name' && sortOrder === 'asc' && '✓'}
+              </div>
+              <div
+                className={`${styles.sortOption} ${sortKey === 'name' && sortOrder === 'desc' ? styles.selected : ''}`}
+                onClick={() => handleSortSelect('name', 'desc')}
+              >
+                Назва (Я-А) {sortKey === 'name' && sortOrder === 'desc' && '✓'}
+              </div>
+              <div
+                className={`${styles.sortOption} ${sortKey === 'quantity' && sortOrder === 'desc' ? styles.selected : ''}`}
+                onClick={() => handleSortSelect('quantity', 'desc')}
+              >
+                Кількість (Найбільша) {sortKey === 'quantity' && sortOrder === 'desc' && '✓'}
+              </div>
+              <div
+                className={`${styles.sortOption} ${sortKey === 'quantity' && sortOrder === 'asc' ? styles.selected : ''}`}
+                onClick={() => handleSortSelect('quantity', 'asc')}
+              >
+                Кількість (Найменша) {sortKey === 'quantity' && sortOrder === 'asc' && '✓'}
+              </div>
+              <div
+                className={`${styles.sortOption} ${sortKey === 'expiryDate' && sortOrder === 'asc' ? styles.selected : ''}`}
+                onClick={() => handleSortSelect('expiryDate', 'asc')}
+              >
+                Термін (Скоро спливає) {sortKey === 'expiryDate' && sortOrder === 'asc' && '✓'}
+              </div>
+              <div
+                className={`${styles.sortOption} ${sortKey === 'expiryDate' && sortOrder === 'desc' ? styles.selected : ''}`}
+                onClick={() => handleSortSelect('expiryDate', 'desc')}
+              >
+                Термін (Найсвіжіші) {sortKey === 'expiryDate' && sortOrder === 'desc' && '✓'}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      {processedItems.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#888', marginTop: '40px' }}>Нічого не знайдено</p>
+      ) : (
+        <div className={styles.grid}>
+          {processedItems.map((item) => (
+            <PantryCard key={item.id} item={item} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 };

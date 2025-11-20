@@ -18,7 +18,7 @@ export class UserRepository {
       return {
         users: Array.isArray(parsed.users) ? parsed.users : [],
       };
-    } catch (error) {
+    } catch (_) {
       return { users: [] };
     }
   }

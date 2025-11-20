@@ -43,8 +43,8 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
   };
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div style={overlayStyle}>
+      <div style={modalStyle}>
         <div style={headerStyle}>
           <h2>{title}</h2>
           <button

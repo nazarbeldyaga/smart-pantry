@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared/api/apiClient';
+import { apiClient } from '@/shared/api/apiClient.ts';
 import type { IShoppingItem, CreateShoppingItemDto } from '../types/shopping-list-types';
 
 export const getShoppingList = () => apiClient.get<IShoppingItem[]>('/shopping-list');

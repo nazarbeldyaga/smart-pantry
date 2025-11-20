@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { IShoppingItem, CreateShoppingItemDto } from '../types/shopping-list-types';
 import * as api from '../api/shoppingListApi';
+import { AxiosError } from 'axios';
 
 interface ShoppingListState {
   items: IShoppingItem[];
@@ -25,7 +26,8 @@ export const useShoppingListStore = create<ShoppingListState>((set, get) => ({
       const res = await api.getShoppingList();
       const itemsWithState = res.data.map((item) => ({ ...item, isChecked: false }));
       set({ items: itemsWithState, isLoading: false });
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       set({ error: err.message, isLoading: false });
     }
   },
@@ -36,7 +38,8 @@ export const useShoppingListStore = create<ShoppingListState>((set, get) => ({
       const newItem = { ...res.data, isChecked: false };
       set((state) => ({ items: [...state.items, newItem] }));
       return true;
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       console.error(err);
       return false;
     }
@@ -73,7 +76,8 @@ export const useShoppingListStore = create<ShoppingListState>((set, get) => ({
       await get().fetchItems();
 
       alert('Продукти успішно переміщені в комору!');
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       set({ error: err.message, isLoading: false });
     }
   },

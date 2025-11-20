@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import type { AuthState } from '../types/auth-types';
 import { loginUser, registerUser } from '../api/authApi';
-import { apiClient } from '../../../shared/api/apiClient';
+import { apiClient } from '@/shared/api/apiClient.ts';
+import { AxiosError } from 'axios';
 
 const getTokenFromStorage = (): string | null => {
   return localStorage.getItem('authToken');
@@ -21,7 +22,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       localStorage.setItem('authToken', token);
       set({ user, token, isLoading: false });
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       set({ error: err.response?.data?.message || err.message, isLoading: false });
     }
   },
@@ -34,7 +36,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       localStorage.setItem('authToken', token);
       set({ user, token, isLoading: false });
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       set({ error: err.response?.data?.message || err.message, isLoading: false });
     }
   },

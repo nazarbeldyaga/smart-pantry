@@ -18,7 +18,12 @@ async function bootstrap() {
   app.use(morgan('dev'));
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    maxAge: 3600,
+  });
   await app.listen(port);
   console.log(`API server running on port ${port}`);
 }

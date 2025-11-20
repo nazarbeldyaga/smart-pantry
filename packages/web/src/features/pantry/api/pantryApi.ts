@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared/api/apiClient';
+import { apiClient } from '@/shared/api/apiClient.ts';
 import type { IPantryItem, AddPantryItemDto } from '../types/pantry-types';
 
 export const getPantryItems = async (): Promise<IPantryItem[]> => {

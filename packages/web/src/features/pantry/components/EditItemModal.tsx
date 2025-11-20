@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Modal } from '../../../shared/components/Modal';
-import { Input } from '../../../shared/components/Input';
-import { Button } from '../../../shared/components/Button';
+import { Modal } from '@/shared/components/Modal.tsx';
+import { Input } from '@/shared/components/Input.tsx';
+import { Button } from '@/shared/components/Button.tsx';
 import { usePantryStore } from '../state/usePantryStore';
 import type { AddPantryItemDto } from '../types/pantry-types';
-import type { UnitType } from '../../../shared/types/domain-types';
+import type { UnitType } from '@/shared/types/domain-types.ts';
 import styles from './EditItemModal.module.css';
 
 const formatDate = (dateString?: string) => {
@@ -17,6 +17,15 @@ interface EditItemModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const getStep = (unit: UnitType): string => {
+  // Для цільних одиниць (грами, мілілітри, штуки) крок 1
+  if (['г', 'мл', 'шт', 'уп'].includes(unit)) {
+    return '1';
+  }
+  // Для дробових (кілограми, літри) крок 0.1
+  return '0.1';
+};
 
 export const EditItemModal: React.FC<EditItemModalProps> = ({ isOpen, onClose }) => {
   const allPantryItems = usePantryStore((state) => state.items);
@@ -159,7 +168,8 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({ isOpen, onClose })
           value={quantity}
           onChange={(e) => setQuantity(Number(e.target.value))}
           required
-          min={0.1}
+          min={1}
+          step={getStep(unit)}
         />
       </div>
 

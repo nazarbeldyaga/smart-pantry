@@ -25,7 +25,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const token = await this.jwtService.signAsync(payload);
 
-    const { passwordHash, ...userProfile } = user;
+    const { passwordHash: _passwordHash, ...userProfile } = user;
     return { user: userProfile, token };
   }
 
@@ -35,7 +35,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const token = await this.jwtService.signAsync(payload);
 
-    const { passwordHash, ...userProfile } = user;
+    const { passwordHash: _passwordHash, ...userProfile } = user;
     return { user: userProfile, token };
   }
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout } from '../../shared/layouts/PageLayout';
 import { PantryList } from '../../features/pantry/components/PantryList';
-import { useAuthStore } from '../../features/auth/state/useAuthStore';
+import { useAuthStore } from '@/features/auth/state/useAuthStore.ts';
 import { Button } from '../../shared/components/Button';
 import styles from './PantryPage.module.css';
 import { AddItemModal } from '../../features/pantry/components/AddItemModal';

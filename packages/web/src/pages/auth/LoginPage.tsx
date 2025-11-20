@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '../../features/auth/state/useAuthStore';
+import { useAuthStore } from '@/features/auth/state/useAuthStore.ts';
 import { Input } from '../../shared/components/Input';
 import { Navigate, useNavigate } from 'react-router-dom';
 import styles from './LoginPage.module.css';

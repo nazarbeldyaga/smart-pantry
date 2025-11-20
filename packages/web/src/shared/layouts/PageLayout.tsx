@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuthStore } from '../../features/auth/state/useAuthStore.ts';
+import { useAuthStore } from '@/features/auth/state/useAuthStore.ts';
 
 export const PageLayout = ({ children }: { children: React.ReactNode }) => {
   const logout = useAuthStore((state) => state.logout);

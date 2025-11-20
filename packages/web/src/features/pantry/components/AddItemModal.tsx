@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal } from '../../../shared/components/Modal';
-import { Input } from '../../../shared/components/Input';
-import { Button } from '../../../shared/components/Button';
+import { Modal } from '@/shared/components/Modal.tsx';
+import { Input } from '@/shared/components/Input.tsx';
+import { Button } from '@/shared/components/Button.tsx';
 import { usePantryStore } from '../state/usePantryStore';
 import type { AddPantryItemDto } from '../types/pantry-types';
-import type { IProduct, UnitType } from '../../../shared/types/domain-types';
+import type { IProduct, UnitType } from '@/shared/types/domain-types.ts';
 import styles from './AddItemModal.module.css';
 import { getProductList } from '../../product/api/productApi';
 
@@ -14,6 +14,15 @@ interface AddItemModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const getStep = (unit: UnitType): string => {
+  // Для цільних одиниць (грами, мілілітри, штуки) крок 1
+  if (['г', 'мл', 'шт', 'уп'].includes(unit)) {
+    return '1';
+  }
+  // Для дробових (кілограми, літри) крок 0.1
+  return '0.1';
+};
 
 export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
@@ -114,7 +123,8 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) =
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
             required
-            min={0.01}
+            min={1}
+            step={getStep(unit)}
           />
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Modal } from '../../../shared/components/Modal';
-import { Input } from '../../../shared/components/Input';
-import { Button } from '../../../shared/components/Button';
+import { Modal } from '@/shared/components/Modal.tsx';
+import { Input } from '@/shared/components/Input.tsx';
+import { Button } from '@/shared/components/Button.tsx';
 import { usePantryStore } from '../state/usePantryStore';
 import type { IPantryItem } from '../types/pantry-types';
 import styles from './DeleteItemModal.module.css';

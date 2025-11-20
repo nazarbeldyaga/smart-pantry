@@ -1,4 +1,4 @@
-import type { UnitType } from '../../../shared/types/domain-types';
+import type { UnitType } from '@/shared/types/domain-types.ts';
 
 export interface IPantryItem {
   id: string;

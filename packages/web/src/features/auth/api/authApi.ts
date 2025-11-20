@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared/api/apiClient';
+import { apiClient } from '@/shared/api/apiClient.ts';
 
 export const registerUser = (username: string, email: string, pass: string) => {
   return apiClient.post('/auth/register', { username, email, password: pass });

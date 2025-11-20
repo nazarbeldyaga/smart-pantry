@@ -1,5 +1,5 @@
-import { apiClient } from '../../../shared/api/apiClient';
-import type { IProduct } from '../../../shared/types/domain-types';
+import { apiClient } from '@/shared/api/apiClient.ts';
+import type { IProduct } from '@/shared/types/domain-types.ts';
 
 export const getProductList = async (): Promise<IProduct[]> => {
   console.log('API: Запит getProductList...');

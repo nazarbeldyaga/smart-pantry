@@ -6,6 +6,7 @@ import {
   updatePantryItem,
 } from '../api/pantryApi';
 import type { IPantryItem, AddPantryItemDto } from '../types/pantry-types';
+import { AxiosError } from 'axios';
 
 interface PantryState {
   items: IPantryItem[];
@@ -29,7 +30,7 @@ export const usePantryStore = create<PantryState>((set) => ({
     try {
       const fetchedItems = await getPantryItems();
       set({ items: fetchedItems, isLoading: false });
-    } catch (err) {
+    } catch (_) {
       set({ error: 'Помилка завантаження даних', isLoading: false });
     }
   },
@@ -43,7 +44,8 @@ export const usePantryStore = create<PantryState>((set) => ({
         isLoading: false,
       }));
       return true;
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       const message = err.response?.data?.message || 'Невідома помилка сервера';
       set({ error: message, isLoading: false });
       return false;
@@ -62,7 +64,8 @@ export const usePantryStore = create<PantryState>((set) => ({
       }));
 
       return true;
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       const message = err.response?.data?.message || 'Помилка при видаленні продуктів';
       set({ error: message, isLoading: false });
       return false;
@@ -80,7 +83,8 @@ export const usePantryStore = create<PantryState>((set) => ({
         isLoading: false,
       }));
       return true;
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message: string }>;
       const message = err.response?.data?.message || 'Помилка при оновленні продукту';
       set({ error: message, isLoading: false });
       return false;
