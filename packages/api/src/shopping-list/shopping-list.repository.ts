@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { ShoppingList } from './shopping-list.entity';
@@ -9,7 +9,6 @@ interface ShoppingListDbData {
 
 @Injectable()
 export class ShoppingListRepository implements OnModuleInit {
-  private readonly logger = new Logger(ShoppingListRepository.name);
   private dbPath = path.join(process.cwd(), 'db.shopping-list.json');
 
   async onModuleInit() {
@@ -31,10 +30,6 @@ export class ShoppingListRepository implements OnModuleInit {
 
   async findAll(userId: string): Promise<ShoppingList[]> {
     const db = await this.readDB();
-    this.logger.log(
-      'Repo',
-      db.listItems.filter((item) => item.userId === userId)
-    );
     return db.listItems.filter((item) => item.userId === userId);
   }
 

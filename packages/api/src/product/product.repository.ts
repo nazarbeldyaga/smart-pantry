@@ -18,7 +18,7 @@ export class ProductRepository {
       return {
         products: Array.isArray(parsed.products) ? parsed.products : [],
       };
-    } catch (error) {
+    } catch (_) {
       return { products: [] };
     }
   }

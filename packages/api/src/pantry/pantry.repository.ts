@@ -18,7 +18,7 @@ export class PantryRepository {
       return {
         pantryItems: Array.isArray(parsed.pantryItems) ? parsed.pantryItems : [],
       };
-    } catch (error) {
+    } catch (_) {
       return { pantryItems: [] };
     }
   }
