@@ -21,7 +21,14 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       // 'warn' - Попереджає про невикористані змінні,
       // АЛЕ ігнорує змінні, які починаються з '_' (наприклад, у (req, _res, next))
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_', // Ігнорувати аргументи (напр. _req)
+          varsIgnorePattern: '^_', // Ігнорувати змінні (напр. _passwordHash)
+          caughtErrorsIgnorePattern: '^_', // Ігнорувати помилки в catch (напр. _)
+        },
+      ],
     },
   }
 );

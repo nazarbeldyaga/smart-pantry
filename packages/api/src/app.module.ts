@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { PantryModule } from './pantry/pantry.module';
+import { ProductModule } from './product/product.module';
+import { ShoppingListModule } from './shopping-list/shopping-list.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      // envFilePath: '.env' -- за замовчуванням, можна не вказувати
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
+    UserModule,
+    PantryModule,
+    ProductModule,
+    ShoppingListModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

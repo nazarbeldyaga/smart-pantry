@@ -16,11 +16,14 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "test": "npm test --workspaces --if-present",
-    "pre-push-checks": "npm run lint && npm run test && npm run build"
+    "pre-push-checks": "npm run lint && npm run test && npm run build",
+    "prod:api": "npm run start:prod -w api",
+    "prod:web": "npm run preview -w web"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
     "@types/node": "^20.14.2",
+    "@types/passport-jwt": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.31",
     "@typescript-eslint/parser": "^8.0.0-alpha.31",
     "concurrently": "^8.2.2",
@@ -39,5 +42,11 @@
       "prettier --write",
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "@nestjs/passport": "^11.0.5",
+    "axios": "^1.13.2",
+    "react-router-dom": "^7.9.5",
+    "zustand": "^5.0.8"
   }
 }
