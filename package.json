@@ -18,7 +18,10 @@
     "test": "npm test --workspaces --if-present",
     "pre-push-checks": "npm run lint && npm run test && npm run build",
     "prod:api": "npm run start:prod -w api",
-    "prod:web": "npm run preview -w web"
+    "prod:web": "npm run preview -w web",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:restart": "npm run docker:down && npm run docker:up"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",

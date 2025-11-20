@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateShoppingItemDto } from './dto/create-shopping-item.dto';
 import { PantryService } from '../pantry/pantry.service';
 import { ShoppingListRepository } from './shopping-list.repository';
 import { ShoppingList } from './shopping-list.entity';
 import { CompleteShoppingDto } from './dto/complete-shopping.dto';
+import { UnitType } from '../shared/domain-types';
 
 @Injectable()
 export class ShoppingListService {
@@ -11,7 +12,6 @@ export class ShoppingListService {
     private readonly repository: ShoppingListRepository,
     private readonly pantryService: PantryService
   ) {}
-  private readonly logger = new Logger(ShoppingListService.name);
 
   async findAll(userId: string) {
     return this.repository.findAll(userId);
@@ -44,7 +44,7 @@ export class ShoppingListService {
         await this.pantryService.addItem(userId, {
           name: item.name,
           quantity: item.quantity,
-          unit: item.unit,
+          unit: item.unit as UnitType,
           category: item.category,
         });
 
