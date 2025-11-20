@@ -1,25 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { ProductRepository } from './product.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Product } from './product.entity';
-import { CreateProductDto } from './dto/create-product.dto';
+// import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly productRepo: ProductRepository) {}
+  constructor(
+    @InjectRepository(Product)
+    private readonly productRepo: Repository<Product>
+  ) {}
 
   async findByName(name: string): Promise<Product | undefined> {
-    return this.productRepo.findByName(name);
+    const product = await this.productRepo.findOne({ where: { name } });
+    return product || undefined;
   }
 
-  async create(dto: CreateProductDto): Promise<Product> {
-    const newProduct = new Product();
-    newProduct.name = dto.name;
-    newProduct.category = dto.category || 'custom'; // "custom" як категорія за замовчуванням
-
-    return this.productRepo.create(newProduct);
-  }
+  // async create(dto: CreateProductDto): Promise<Product> {
+  //   const newProduct = this.productRepo.create({
+  //     name: dto.name,
+  //     category: dto.category || 'custom',
+  //   });
+  //   return this.productRepo.save(newProduct);
+  // }
 
   async findAll(): Promise<Product[]> {
-    return this.productRepo.findAll();
+    return this.productRepo.find();
   }
 }

@@ -1,4 +1,6 @@
 import { IsString, IsNumber, IsIn, IsOptional, IsDateString } from 'class-validator';
+import type { UnitType } from '../../shared/domain-types';
+import { UNIT_TYPES } from '../../shared/domain-types';
 
 export class EditPantryItemDto {
   @IsOptional()
@@ -10,8 +12,8 @@ export class EditPantryItemDto {
   quantity?: number;
 
   @IsOptional()
-  @IsIn(['г', 'кг', 'мл', 'л', 'шт', 'уп'])
-  unit?: 'г' | 'кг' | 'мл' | 'л' | 'шт' | 'уп';
+  @IsIn(UNIT_TYPES)
+  unit?: UnitType;
 
   @IsOptional()
   @IsDateString()

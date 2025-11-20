@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PantryRepository } from './pantry.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In } from 'typeorm';
 import { CreatePantryItemDto } from './dto/create-pantry-item.dto';
 import { PantryItem } from './pantry.entity';
 import { ProductService } from '../product/product.service';
@@ -8,42 +9,40 @@ import { EditPantryItemDto } from './dto/edit-pantry-item.dto';
 @Injectable()
 export class PantryService {
   constructor(
-    private readonly pantryRepo: PantryRepository,
+    @InjectRepository(PantryItem)
+    private readonly pantryRepo: Repository<PantryItem>,
     private readonly productService: ProductService
   ) {}
 
   async getItemsByUserId(userId: string): Promise<PantryItem[]> {
-    return this.pantryRepo.findByUserId(userId);
+    return this.pantryRepo.find({ where: { userId } });
   }
 
   async addItem(userId: string, dto: CreatePantryItemDto): Promise<PantryItem> {
     const masterProduct = await this.productService.findByName(dto.name);
 
-    const newItem = new PantryItem();
-    newItem.userId = userId;
-    newItem.quantity = dto.quantity;
-    newItem.unit = dto.unit;
-    newItem.expiryDate = dto.expiryDate;
+    const newItem = this.pantryRepo.create({
+      userId,
+      name: dto.name,
+      quantity: dto.quantity,
+      unit: dto.unit,
+      expiryDate: dto.expiryDate,
+      productId: masterProduct ? masterProduct.id : null,
+      category: masterProduct ? masterProduct.category : dto.category || 'Інше',
+    });
 
-    if (masterProduct) {
-      newItem.productId = masterProduct.id;
-      newItem.name = masterProduct.name;
-      newItem.category = masterProduct.category;
-    } else {
-      newItem.productId = null;
-      newItem.name = dto.name;
-      newItem.category = dto.category || 'Інше';
-    }
-
-    return this.pantryRepo.create(newItem);
+    return this.pantryRepo.save(newItem);
   }
 
   async deleteItems(userId: string, itemIds: string[]): Promise<void> {
-    return this.pantryRepo.deleteByIds(userId, itemIds);
+    await this.pantryRepo.delete({
+      userId,
+      id: In(itemIds),
+    });
   }
 
   async updateItem(userId: string, itemId: string, dto: EditPantryItemDto): Promise<PantryItem> {
-    const currentItem = await this.pantryRepo.findById(itemId);
+    const currentItem = await this.pantryRepo.findOne({ where: { id: itemId } });
 
     if (!currentItem) {
       throw new NotFoundException('Продукт не знайдено');
@@ -52,14 +51,14 @@ export class PantryService {
       throw new ForbiddenException('Ви не маєте права редагувати цей продукт');
     }
 
-    const updates: Partial<PantryItem> = {};
+    if (dto.quantity !== undefined) currentItem.quantity = dto.quantity;
+    if (dto.unit !== undefined) currentItem.unit = dto.unit;
+    if (dto.expiryDate !== undefined) currentItem.expiryDate = dto.expiryDate;
 
-    if (dto.quantity !== undefined) updates.quantity = dto.quantity;
-    if (dto.unit !== undefined) updates.unit = dto.unit;
-    if (dto.expiryDate !== undefined) updates.expiryDate = dto.expiryDate;
     if (dto.category && currentItem.productId === null) {
-      updates.category = dto.category;
+      currentItem.category = dto.category;
     }
-    return this.pantryRepo.update(itemId, updates);
+
+    return this.pantryRepo.save(currentItem);
   }
 }

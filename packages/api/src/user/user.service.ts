@@ -1,20 +1,28 @@
 import { Injectable, ConflictException } from '@nestjs/common';
-import { UserRepository } from './user.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { RegisterUserDto } from '../auth/dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepo: UserRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>
+  ) {}
 
   async create(dto: RegisterUserDto): Promise<User> {
-    const existingUser = await this.userRepo.findByEmail(dto.email);
+    const existingUser = await this.userRepo.findOne({
+      where: { email: dto.email },
+    });
     if (existingUser) {
       throw new ConflictException('Користувач з таким email вже існує');
     }
 
-    const existingUsername = await this.userRepo.findByUsername(dto.username);
+    const existingUsername = await this.userRepo.findOne({
+      where: { username: dto.username },
+    });
     if (existingUsername) {
       throw new ConflictException('Користувач з таким username вже існує');
     }
@@ -22,15 +30,17 @@ export class UserService {
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(dto.password, salt);
 
-    const newUser = new User();
-    newUser.username = dto.username;
-    newUser.email = dto.email;
-    newUser.passwordHash = passwordHash;
+    const newUser = this.userRepo.create({
+      username: dto.username,
+      email: dto.email,
+      passwordHash: passwordHash,
+    });
 
-    return this.userRepo.create(newUser);
+    return this.userRepo.save(newUser);
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.userRepo.findByEmail(email);
+    const user = await this.userRepo.findOne({ where: { email } });
+    return user || undefined;
   }
 }
