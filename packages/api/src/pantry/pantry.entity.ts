@@ -17,7 +17,7 @@ export class PantryItem {
   @Column('float')
   quantity: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   unit: UnitType;
 
   @Column({ type: 'date', nullable: true })

@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "This config was generated using a 'stryker init' command.",
+  "packageManager": "npm",
+  "reporters": ["html", "clear-text", "progress"],
+  "testRunner": "jest",
+  "jest": {
+    "projectType": "custom",
+    "configFile": "package.json",
+    "enableFindRelatedTests": true
+  },
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
+  "coverageAnalysis": "perTest",
+  "mutate": ["src/shopping-list/shopping-list.service.ts"]
+}
