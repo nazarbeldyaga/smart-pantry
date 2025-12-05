@@ -1,4 +1,6 @@
 import { IsString, IsNumber, IsIn, IsOptional, IsDateString, MinLength } from 'class-validator';
+import type { UnitType } from '../../shared/domain-types';
+import { UNIT_TYPES } from '../../shared/domain-types';
 
 export class CreatePantryItemDto {
   @IsString()
@@ -8,8 +10,8 @@ export class CreatePantryItemDto {
   @IsNumber()
   quantity: number;
 
-  @IsIn(['г', 'кг', 'мл', 'л', 'шт', 'уп'])
-  unit: 'г' | 'кг' | 'мл' | 'л' | 'шт' | 'уп';
+  @IsIn(UNIT_TYPES)
+  unit: UnitType;
 
   @IsOptional()
   @IsDateString()

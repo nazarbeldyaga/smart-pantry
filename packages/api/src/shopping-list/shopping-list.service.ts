@@ -1,56 +1,61 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateShoppingItemDto } from './dto/create-shopping-item.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In } from 'typeorm';
 import { PantryService } from '../pantry/pantry.service';
-import { ShoppingListRepository } from './shopping-list.repository';
 import { ShoppingList } from './shopping-list.entity';
 import { CompleteShoppingDto } from './dto/complete-shopping.dto';
+import type { UnitType } from '../shared/domain-types';
 
 @Injectable()
 export class ShoppingListService {
   constructor(
-    private readonly repository: ShoppingListRepository,
+    @InjectRepository(ShoppingList)
+    private readonly shoppingListRepo: Repository<ShoppingList>,
     private readonly pantryService: PantryService
   ) {}
-  private readonly logger = new Logger(ShoppingListService.name);
 
-  async findAll(userId: string) {
-    return this.repository.findAll(userId);
+  async findAll(userId: string): Promise<ShoppingList[]> {
+    return this.shoppingListRepo.find({ where: { userId } });
   }
 
-  async create(userId: string, dto: CreateShoppingItemDto) {
-    const newItem = new ShoppingList();
-    newItem.userId = userId;
-    newItem.name = dto.name;
-    newItem.quantity = dto.quantity;
-    newItem.unit = dto.unit;
-    newItem.category = dto.category || 'Інше';
-    newItem.productId = null;
+  async create(userId: string, dto: CreateShoppingItemDto): Promise<ShoppingList> {
+    const newItem = this.shoppingListRepo.create({
+      userId,
+      name: dto.name,
+      quantity: dto.quantity,
+      unit: dto.unit,
+      category: dto.category || 'Інше',
+      productId: null,
+    });
 
-    return this.repository.create(newItem);
+    return this.shoppingListRepo.save(newItem);
   }
 
-  async delete(userId: string, id: string) {
-    return this.repository.delete(userId, id);
+  async delete(userId: string, id: string): Promise<void> {
+    await this.shoppingListRepo.delete({ id, userId });
   }
 
   async completeShopping(userId: string, dto: CompleteShoppingDto) {
     const { ids } = dto;
     let movedCount = 0;
+    const itemsToMove = await this.shoppingListRepo.find({
+      where: {
+        userId,
+        id: In(ids),
+      },
+    });
 
-    for (const id of ids) {
-      const item = await this.repository.findById(userId, id);
+    for (const item of itemsToMove) {
+      await this.pantryService.addItem(userId, {
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit as UnitType,
+        category: item.category,
+      });
 
-      if (item) {
-        await this.pantryService.addItem(userId, {
-          name: item.name,
-          quantity: item.quantity,
-          unit: item.unit,
-          category: item.category,
-        });
-
-        await this.repository.delete(userId, id);
-        movedCount++;
-      }
+      await this.shoppingListRepo.delete(item.id);
+      movedCount++;
     }
 
     return { count: movedCount };

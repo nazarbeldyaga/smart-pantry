@@ -1,4 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, Min, IsIn, IsOptional } from 'class-validator';
+import type { UnitType } from '../../shared/domain-types';
+import { UNIT_TYPES } from '../../shared/domain-types';
 
 export class CreateShoppingItemDto {
   @IsNotEmpty()
@@ -9,8 +11,8 @@ export class CreateShoppingItemDto {
   @Min(0.1)
   quantity: number;
 
-  @IsIn(['г', 'кг', 'мл', 'л', 'шт', 'уп'])
-  unit: 'г' | 'кг' | 'мл' | 'л' | 'шт' | 'уп';
+  @IsIn(UNIT_TYPES)
+  unit: UnitType;
 
   @IsOptional()
   @IsString()
