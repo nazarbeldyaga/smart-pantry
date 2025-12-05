@@ -25,6 +25,11 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-unsafe-call': 'warn',
       '@typescript-eslint/no-unsafe-member-access': 'warn',
+      files: ['**/*.spec.ts', '**/*.test.ts'],
+      rules: {
+        '@typescript-eslint/unbound-method': 'off',
+        'jest/unbound-method': 'off', // якщо використовується плагін jest
+      },
     },
   },
   // 3. Ще один об'єкт для загальних налаштувань пакету 'api'

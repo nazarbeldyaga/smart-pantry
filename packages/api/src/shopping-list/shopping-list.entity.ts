@@ -17,7 +17,7 @@ export class ShoppingList {
   @Column('float')
   quantity: number;
 
-  @Column()
+  @Column({ type: 'varchar' })
   unit: UnitType;
 
   @Column({ type: 'uuid' })
