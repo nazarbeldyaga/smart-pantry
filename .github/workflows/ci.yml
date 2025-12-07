@@ -3,7 +3,7 @@ name: CI Checks
 # коли
 on:
   push:
-    branches: [ "main" ] # при пуші в main
+    branches: [ "main", "lab6" ] # при пуші в main
   pull_request:
     branches: [ "main" ] # при створенні PR в main
 
