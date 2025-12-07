@@ -28,6 +28,7 @@ import { ShoppingList } from './shopping-list/shopping-list.entity';
         database: config.get<string>('DB_NAME'),
         entities: [User, PantryItem, Product, ShoppingList],
         synchronize: true,
+        ssl: config.get<boolean>('DB_SSL') ? { rejectUnauthorized: false } : false,
       }),
     }),
     AuthModule,
