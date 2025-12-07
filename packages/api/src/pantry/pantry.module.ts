@@ -7,11 +7,7 @@ import { ProductModule } from '../product/product.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([PantryItem]), // <-- Підключаємо Entity
-    AuthModule,
-    ProductModule,
-  ],
+  imports: [TypeOrmModule.forFeature([PantryItem]), AuthModule, ProductModule],
   controllers: [PantryController],
   providers: [PantryService],
   exports: [PantryService],

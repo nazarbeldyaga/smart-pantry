@@ -11,6 +11,7 @@ import { User } from './user/user.entity';
 import { PantryItem } from './pantry/pantry.entity';
 import { Product } from './product/product.entity';
 import { ShoppingList } from './shopping-list/shopping-list.entity';
+import { SeedModule } from './database/seed.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ShoppingList } from './shopping-list/shopping-list.entity';
     PantryModule,
     ProductModule,
     ShoppingListModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
