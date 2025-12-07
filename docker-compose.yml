@@ -5,7 +5,7 @@ services:
     image: postgres:15
     container_name: smart-pantry-db
     ports:
-      - '5433:5432'
+      - '5432:5432'
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword

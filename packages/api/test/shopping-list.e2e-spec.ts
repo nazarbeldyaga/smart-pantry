@@ -8,7 +8,6 @@ describe('ShoppingListController (e2e)', () => {
   let app: INestApplication;
   let jwtToken: string;
 
-  // Дані для тестового користувача (використовуємо timestamp, щоб бути унікальними)
   const testUser = {
     username: `user_${Date.now()}`,
     email: `test_${Date.now()}@example.com`,
@@ -16,7 +15,6 @@ describe('ShoppingListController (e2e)', () => {
   };
 
   beforeAll(async () => {
-    // 1. Піднімаємо весь додаток (включаючи підключення до БД)
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -24,33 +22,21 @@ describe('ShoppingListController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
 
-    // 2. Реєструємо користувача і отримуємо токен (це аналог "Логіну")
     const registerResponse = await request(app.getHttpServer())
       .post('/auth/register')
       .send(testUser);
 
-    // Якщо реєстрація повертає токен одразу:
     jwtToken = registerResponse.body.token;
-
-    // Якщо реєстрація не повертає токен, треба зробити логін (розкоментуйте, якщо треба):
-    /*
-    const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: testUser.email, password: testUser.password });
-    jwtToken = loginResponse.body.token;
-    */
   });
 
   afterAll(async () => {
-    // Закриваємо з'єднання після тестів
     await app.close();
   });
 
-  // --- ТЕСТ 1: Перевірка порожнього списку ---
   it('/shopping-list (GET) - should return empty array initially', () => {
     return request(app.getHttpServer())
       .get('/shopping-list')
-      .set('Authorization', `Bearer ${jwtToken}`) // Обов'язково передаємо токен
+      .set('Authorization', `Bearer ${jwtToken}`)
       .expect(200)
       .expect((res: request.Response) => {
         expect(Array.isArray(res.body)).toBe(true);
@@ -58,7 +44,6 @@ describe('ShoppingListController (e2e)', () => {
       });
   });
 
-  // --- ТЕСТ 2: Додавання товару ---
   let createdItemId: string;
 
   it('/shopping-list (POST) - should create a new item', async () => {
@@ -77,10 +62,9 @@ describe('ShoppingListController (e2e)', () => {
     expect(response.body).toHaveProperty('id');
     expect(response.body.name).toBe(newItem.name);
 
-    createdItemId = response.body.id; // Зберігаємо ID для видалення
+    createdItemId = response.body.id;
   });
 
-  // --- ТЕСТ 3: Перевірка наявності товару ---
   it('/shopping-list (GET) - should return list with 1 item', () => {
     return request(app.getHttpServer())
       .get('/shopping-list')
@@ -92,15 +76,13 @@ describe('ShoppingListController (e2e)', () => {
       });
   });
 
-  // --- ТЕСТ 4: Видалення товару ---
   it('/shopping-list/:id (DELETE) - should remove the item', () => {
     return request(app.getHttpServer())
       .delete(`/shopping-list/${createdItemId}`)
       .set('Authorization', `Bearer ${jwtToken}`)
-      .expect(200); // або 204, залежно від вашого контролера
+      .expect(200);
   });
 
-  // --- ТЕСТ 5: Перевірка, що видалилось ---
   it('/shopping-list (GET) - should be empty again', () => {
     return request(app.getHttpServer())
       .get('/shopping-list')
