@@ -6,6 +6,8 @@
 # Кеш Vite
 /packages/web/node_modules/.vite
 
+packages/web/playwright-report/
+
 # Результати збірки (компіляції)
 /packages/api/dist
 /packages/web/dist

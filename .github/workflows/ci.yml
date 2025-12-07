@@ -1,0 +1,45 @@
+name: CI Checks
+
+# коли
+on:
+  push:
+    branches: [ "main" ] # при пуші в main
+  pull_request:
+    branches: [ "main" ] # при створенні PR в main
+
+jobs:
+  build-and-test:
+    name: Build, Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # скачуємо код репозиторію
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # встановлюємо ноду
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # встановлюємо залежності
+      - name: Install dependencies
+        run: npm ci
+
+      # перевіряємо Prettier
+      - name: Check Formatting
+        run: npm run format:check
+
+      # перевіряємо ESLint
+      - name: Run Linter
+        run: npm run lint
+
+      # перевіряємо білд
+      - name: Build Project
+        run: npm run build
+
+      # тести
+      - name: Run Unit Tests
+        run: npm run test
