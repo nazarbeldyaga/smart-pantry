@@ -3,9 +3,9 @@ name: CI Checks
 # коли
 on:
   push:
-    branches: [ "main", "lab6" ] # при пуші в main
+    branches: ['main', 'lab6'] # при пуші в main
   pull_request:
-    branches: [ "main" ] # при створенні PR в main
+    branches: ['main'] # при створенні PR в main
 
 jobs:
   build-and-test:
