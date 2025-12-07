@@ -10,5 +10,5 @@
   "jsxSingleQuote": false,
   "arrowParens": "always",
   "bracketSameLine": false,
-  "endOfLine": "crlf"
+  "endOfLine": "lf"
 }
