@@ -9,11 +9,15 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
 
+    env:
+      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
     steps:
       - name: Trigger Render Deploy
-        if: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+        if: ${{ env.RENDER_DEPLOY_HOOK != '' }}
+        run: curl -X POST "$RENDER_DEPLOY_HOOK"
 
       - name: Trigger Vercel Deploy
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK }}
-        run: curl -X POST ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        if: ${{ env.VERCEL_DEPLOY_HOOK != '' }}
+        run: curl -X POST "$VERCEL_DEPLOY_HOOK"
